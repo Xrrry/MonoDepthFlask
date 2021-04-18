@@ -69,15 +69,24 @@ def uploaded_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            test_simple('.\\save\\' + filename, feed_width, feed_height, device, encoder, depth_decoder)
-            return get_file(filename.split('.')[0] + '_disp.jpeg')
+            left_sound, right_sound, sound_level = test_simple('.\\save\\' + filename, feed_width, feed_height, device, encoder, depth_decoder)
+            return get_file(filename.split('.')[0] + '_disp.jpeg', left_sound, right_sound, sound_level)
+
 
 @app.route('/get_file/<file_name>', methods=['GET'])
-def get_file(file_name):
+def get_file(file_name, left_sound, right_sound, sound_level):
     directory = './save'
+    headers = {
+        'Content-Type': 'image/jpeg',
+        'File-Name': file_name,
+        'Left-Volumn': left_sound,
+        'Right-Volumn': right_sound,
+        'Depth-Level': sound_level
+    }
     try:
         response = make_response(
             send_from_directory(directory, file_name, as_attachment=True))
+        response.headers = headers
         return response
     except Exception as e:
         return jsonify({"code": "异常", "message": "{}".format(e)})
