@@ -74,8 +74,8 @@ def test_simple(ima_path, feed_width, feed_height, device, encoder, depth_decode
         # disp_resized_rs = torch.chunk(disp_resized_rs, 2, dim=0)[0]  # 截取下半部分
         out = torch.chunk(disp_resized_rs, 5, dim=1)
         print("out", out[0].shape)
-        # for index, o in enumerate(out):
-        #     print(index + 1, o.max(), o.min())
+        for index, o in enumerate(out):
+            print(index + 1, o.max(), o.min())
 
         # Saving numpy file
         output_name = os.path.splitext(os.path.basename(ima_path))[0]
@@ -111,10 +111,12 @@ def sound_map(out):
             maxi = index
     sound_level = 0
     if maxs >= 0.9:
-        sound_level = 3
+        sound_level = 4
     elif maxs >= 0.8:
-        sound_level = 2
+        sound_level = 3
     elif maxs >= 0.7:
+        sound_level = 2
+    elif maxs >= 0.6:
         sound_level = 1
 
     if maxi == 0:
@@ -132,7 +134,7 @@ def sound_map(out):
     else:
         left_sound = 0
         right_sound = 10
-    print(left_sound, right_sound, sound_level)
+    # print(left_sound, right_sound, sound_level)
     return left_sound, right_sound, sound_level
 
 
